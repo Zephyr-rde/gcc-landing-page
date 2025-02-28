@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        .signup-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            margin: 2rem auto;
+        }
+        h2 {
+            color: #2c3e50;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+        }
+        input {
+            width: 100%;
+            padding: clamp(0.7rem, 2vw, 0.9rem);
+            border: 2px solid #e1e1e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        button {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: clamp(0.8rem, 2vw, 1rem);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #3498db, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+        }
+        .form-footer a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .form-footer a:hover {
+            color: #2c3e50;
+            text-decoration: underline;
+        }
+        input::placeholder {
+            color: #999;
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+            }
+            .signup-container {
+                padding: 1.5rem;
+                margin: 1rem auto;
+                width: 95%;
+            }
+        }
+        @media (min-width: 1200px) {
+            .signup-container {
+                max-width: 450px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h2 style="text-align: center;">Create an Account</h2>
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" name="fullname" required placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required 
+                    placeholder="Choose a username" 
+                    pattern="^[a-zA-Z0-9_]+$"
+                    title="Username can only contain letters, numbers and underscore"
+                    onblur="checkUsername(this.value)">
+                <span id="username-error" style="color: red; font-size: 0.8rem; display: none;">This username is already taken</span>
+                <span id="username-format-error" style="color: red; font-size: 0.8rem; display: none;">Username can only contain letters, numbers and underscore</span>
+            </div>
+            <script>
+                async function checkUsername(username) {
+                    // Check username format first
+                    const formatRegex = /^[a-zA-Z0-9_]+$/;
+                    const formatErrorSpan = document.getElementById('username-format-error');
+                    const errorSpan = document.getElementById('username-error');
+                    const submitButton = document.querySelector('button[type="submit"]');
+
+                    if (!formatRegex.test(username)) {
+                        formatErrorSpan.style.display = 'block';
+                        errorSpan.style.display = 'none';
+                        submitButton.disabled = true;
+                        return;
+                    }
+                    
+                    formatErrorSpan.style.display = 'none';
+
+                    // Make API call to check if username exists
+                    const response = await fetch('/api/check-username', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username })
+                    });
+                    const data = await response.json();
+                    
+                    if (data.exists) {
+                        errorSpan.style.display = 'block';
+                        submitButton.disabled = true;
+                    } else {
+                        errorSpan.style.display = 'none';
+                        submitButton.disabled = false;
+                    }
+                }
+            </script>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required 
+                    pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+                    title="Password must be at least 8 characters long and include letters, numbers and special characters"
+                    placeholder="Enter your password ">
+                <span id="password-requirements" style="color: #666; font-size: 0.8rem; display: block; margin-top: 0.5rem;">
+                    Password must contain at least 8 characters, including letters, numbers and atleast one special character.
+                </span>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" required 
+                    pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+                    title="Password must be at least 8 characters long and include letters, numbers and special characters"
+                    placeholder="Confirm your password">
+                <span id="password-match-error" style="color: red; font-size: 0.8rem; display: none;">
+                    Passwords do not match
+                </span>
+            </div>
+            <button type="submit" onclick="window.location.href='../index.html'">Sign Up</button>
+            <div id="success-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.2); text-align: center; z-index: 1000;">
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">Signup Successful!</h3>
+                <p style="color: #666; margin-bottom: 20px;">Thank you for creating an account.</p>
+            </div>
+
+            <script>
+                function showSuccessPopup(event) {
+                    event.preventDefault();
+                    document.getElementById('success-popup').style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 2000); // Redirect after 2 seconds
+                }
+
+                // Update the submit button click handler
+                document.querySelector('button[type="submit"]').onclick = showSuccessPopup;
+            </script>
+            <div class="form-footer">
+                Already have an account? <a href="login.html">Log In</a>
+            </div>
+        </form>
+    </div>
+ 
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Check if passwords match
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            // Here you would typically send the form data to your server
+            console.log('Form submitted');
+            // You can add AJAX request here to handle form submission
+        });
+    </script>
+</body>
+</html>

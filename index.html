@@ -12,7 +12,7 @@
     <!-- Navigation Bar -->
     <nav>
         <ul>
-            <li class="logo-container"><a href="#" class="logo">GCCTaxLaws</a></li>
+            <li class="logo-container"><a href="index.html" class="logo">GCCTaxLaws</a></li>
             
             <li><a href="#">Tax Laws</a></li>
             <li><a href="#">Court Decisions</a></li>
@@ -20,7 +20,7 @@
             <li><a href="#">Tax Treaties</a></li>
             <li><a href="#">Research Tools</a></li>
             <li><a href="#">Contact Us</a></li>
-           <li class="login-signup"><a href="#" class="button">Login / Sign Up</a></li>
+           <li class="login-signup"><a href="Signup/login.html" class="button">Login / Sign Up</a></li>
         </ul>
     </nav>
 
@@ -49,7 +49,7 @@
               
                 <!-- Search Query Form -->
                 <div class="search-form">
-                    <form action="#" method="GET">
+                    <form id="countryForm" onsubmit="handleCountrySubmit(event)">
                         <label for="country">Select Country *</label>
                         <select id="country" name="country">
                             <option value="uae">UAE</option>
@@ -60,14 +60,30 @@
                             <option value="oman">Oman</option>
                             <!-- Add more countries as needed -->
                         </select>
-                        <label for="law">Select Law *</label>
-                        <select id="law" name="law">
-                            <option value="corporate-tax-law">Corporate Tax Law</option>
-                            <!-- Add more laws as needed -->
-                        </select>
+                       
                         <button type="submit">Search</button>
                     </form>
+                    <script>
+                        function handleCountrySubmit(event) {
+                            event.preventDefault();
+                            const country = document.getElementById('country').value;
+                            if (country === 'UAE') {
+                                window.location.href = 'https://uaetaxlaws.com/';
+                            } else if (country === 'ksa') {
+                                window.location.href = 'https://ksataxlaws.com';
+                            } else if (country === 'kuwait') {
+                                window.location.href = 'https://kuwaittaxlaws.com';
+                            } else if (country === 'bahrain') {
+                                window.location.href = 'https://bahraintaxlaws.com';
+                            } else if (country === 'qatar') {
+                                window.location.href = 'https://qatartaxlaws.com';
+                            } else if (country === 'oman') {
+                                window.location.href = 'https://omantaxlaws.com';
+                            }
+                        }
+                    </script>
                 </div>
+               
             </div>
     </section>
 
